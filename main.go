@@ -24,11 +24,13 @@ func main() {
 	db.Connect()
 	defer db.Close()
 
+	pageHandler := handler.NewPageHandler()
+
 	authService := service.NewAuthService(db.Queries)
 	authHandler := handler.NewAuthHandler(authService)
 
 	r := gin.Default()
-	route.SetupRoutes(r, authHandler)
+	route.SetupRoutes(r, pageHandler, authHandler)
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatalf("Server failed to start: %v", err)

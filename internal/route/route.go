@@ -6,8 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(r *gin.Engine, authHandler *handler.AuthHandler) {
+func SetupRoutes(r *gin.Engine, pageHandler *handler.PageHandler, authHandler *handler.AuthHandler) {
 	r.LoadHTMLGlob("templates/*")
+
+	r.GET("/", pageHandler.ShowIndexPage)
 
 	v1 := r.Group("/api/v1")
 	{
