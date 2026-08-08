@@ -8,8 +8,11 @@ import (
 
 func SetupRoutes(r *gin.Engine, pageHandler *handler.PageHandler, authHandler *handler.AuthHandler) {
 	r.LoadHTMLGlob("templates/*")
+	r.Static("/static", "./static")
 
 	r.GET("/", pageHandler.ShowIndexPage)
+	r.GET("/login", pageHandler.ShowLoginPage)
+	r.GET("/signup", pageHandler.ShowSignupPage)
 
 	v1 := r.Group("/api/v1")
 	{
