@@ -2,6 +2,7 @@ package main
 
 import (
 	"gacha/db"
+	_ "gacha/docs"
 	"gacha/internal/handler"
 	"gacha/internal/route"
 	"gacha/internal/service"
@@ -11,6 +12,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// @title Project Gacha
+// @version 1.0
+// @host localhost:8080
+// @BasePath /api/v1
 func main() {
 	// 환경설정 로드
 	if err := godotenv.Load(".env.dev"); err != nil {

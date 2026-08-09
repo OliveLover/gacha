@@ -1,0 +1,92 @@
+basePath: /api/v1
+definitions:
+  dto.ErrorResponse:
+    properties:
+      error:
+        example: invalid request
+        type: string
+    type: object
+  dto.SignUpRequest:
+    properties:
+      email:
+        type: string
+      nickname:
+        type: string
+      password:
+        type: string
+    type: object
+  pgtype.InfinityModifier:
+    enum:
+    - 1
+    - 0
+    - -1
+    format: int32
+    type: integer
+    x-enum-varnames:
+    - Infinity
+    - Finite
+    - NegativeInfinity
+  pgtype.Timestamptz:
+    properties:
+      infinityModifier:
+        $ref: '#/definitions/pgtype.InfinityModifier'
+      time:
+        type: string
+      valid:
+        type: boolean
+    type: object
+  sqlc.User:
+    properties:
+      created_at:
+        $ref: '#/definitions/pgtype.Timestamptz'
+      email:
+        type: string
+      id:
+        type: string
+      nickname:
+        type: string
+      password_hash:
+        type: string
+      updated_at:
+        $ref: '#/definitions/pgtype.Timestamptz'
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  title: Project Gacha
+  version: "1.0"
+paths:
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: 이메일/이름/닉네임/비밀번호로 새 계정을 생성합니다.
+      parameters:
+      - description: 회원가입 정보
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            properties:
+              message:
+                $ref: '#/definitions/sqlc.User'
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 회원가입
+      tags:
+      - users
+swagger: "2.0"

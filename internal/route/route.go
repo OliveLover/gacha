@@ -4,11 +4,15 @@ import (
 	"gacha/internal/handler"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRoutes(r *gin.Engine, pageHandler *handler.PageHandler, authHandler *handler.AuthHandler) {
 	r.LoadHTMLGlob("templates/*")
 	r.Static("/static", "./static")
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.GET("/", pageHandler.ShowIndexPage)
 	r.GET("/login", pageHandler.ShowLoginPage)
