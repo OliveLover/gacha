@@ -7,28 +7,37 @@ package sqlc
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (email, nickname, password_hash)
-VALUES ($1, $2, $3)
-RETURNING id, email, nickname, password_hash, created_at, updated_at
+INSERT INTO users (email, nickname, password_hash, avatar_id)
+VALUES ($1, $2, $3, $4)
+RETURNING id, email, nickname, password_hash, avatar_id, created_at, updated_at
 `
 
 type CreateUserParams struct {
-	Email        string `json:"email"`
-	Nickname     string `json:"nickname"`
-	PasswordHash string `json:"password_hash"`
+	Email        string      `json:"email"`
+	Nickname     string      `json:"nickname"`
+	PasswordHash string      `json:"password_hash"`
+	AvatarID     pgtype.UUID `json:"avatar_id"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRow(ctx, createUser, arg.Email, arg.Nickname, arg.PasswordHash)
+	row := q.db.QueryRow(ctx, createUser,
+		arg.Email,
+		arg.Nickname,
+		arg.PasswordHash,
+		arg.AvatarID,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
 		&i.Nickname,
 		&i.PasswordHash,
+		&i.AvatarID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -36,7 +45,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, email, nickname, password_hash, created_at, updated_at FROM users
+SELECT id, email, nickname, password_hash, avatar_id, created_at, updated_at FROM users
 WHERE email = $1
 `
 
@@ -48,6 +57,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.Email,
 		&i.Nickname,
 		&i.PasswordHash,
+		&i.AvatarID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

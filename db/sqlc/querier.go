@@ -6,11 +6,15 @@ package sqlc
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	GetAvatarByID(ctx context.Context, id pgtype.UUID) (Avatar, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
+	ListActiveAvatars(ctx context.Context) ([]Avatar, error)
 }
 
 var _ Querier = (*Queries)(nil)

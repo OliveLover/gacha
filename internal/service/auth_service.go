@@ -28,6 +28,7 @@ func (s *AuthService) CreateUser(ctx context.Context, req dto.SignUpRequest) (sq
 		Email:        req.Email,
 		Nickname:     req.Nickname,
 		PasswordHash: string(hash),
+		AvatarID:     req.AvatarID,
 	})
 }
 

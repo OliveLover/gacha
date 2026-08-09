@@ -8,7 +8,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func SetupRoutes(r *gin.Engine, pageHandler *handler.PageHandler, authHandler *handler.AuthHandler) {
+func SetupRoutes(r *gin.Engine, pageHandler *handler.PageHandler, authHandler *handler.AuthHandler, avatarHandler *handler.AvatarHandler) {
 	r.LoadHTMLGlob("templates/*")
 	r.Static("/static", "./static")
 
@@ -22,6 +22,8 @@ func SetupRoutes(r *gin.Engine, pageHandler *handler.PageHandler, authHandler *h
 	{
 		v1.POST("/signup", authHandler.Signup)
 		v1.POST("/login", authHandler.Login)
+
+		v1.GET("/avatars", avatarHandler.ListAvatars)
 	}
 
 }

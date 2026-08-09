@@ -22,6 +22,7 @@
         <header class="header">
             <a
                 href="/login"
+                id="login-link"
                 class="btn btn-primary"
                 style="
                     --bs-btn-padding-y: 0.3rem;
@@ -35,6 +36,31 @@
             >
                 로그인
             </a>
+
+            <div class="dropdown d-none" id="profile-area">
+                <button
+                    class="user-avatar"
+                    id="profile-circle"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                ></button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><span class="dropdown-item-text" id="profile-nickname"></span></li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li class="dropdown-item-text">
+                        <span class="avatar-picker-label">프로필 사진 변경</span>
+                        <div id="header-avatar-picker" class="avatar-picker"></div>
+                    </li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                        <button class="dropdown-item" type="button" onclick="logout()">
+                            로그아웃
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </header>
+
+        <script src="/static/script.js"></script>
     </body>
 </html>

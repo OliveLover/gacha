@@ -34,8 +34,11 @@ func main() {
 	authService := service.NewAuthService(db.Queries)
 	authHandler := handler.NewAuthHandler(authService)
 
+	avatarService := service.NewAvatarService(db.Queries)
+	avatarHandler := handler.NewAvatarHandler(avatarService)
+
 	r := gin.Default()
-	route.SetupRoutes(r, pageHandler, authHandler)
+	route.SetupRoutes(r, pageHandler, authHandler, avatarHandler)
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatalf("Server failed to start: %v", err)

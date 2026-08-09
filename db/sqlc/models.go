@@ -8,11 +8,22 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Avatar struct {
+	ID        pgtype.UUID        `json:"id"`
+	Name      string             `json:"name"`
+	Key       string             `json:"key"`
+	IsActive  bool               `json:"is_active"`
+	SortOrder int32              `json:"sort_order"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
 type User struct {
 	ID           pgtype.UUID        `json:"id"`
 	Email        string             `json:"email"`
 	Nickname     string             `json:"nickname"`
 	PasswordHash string             `json:"password_hash"`
+	AvatarID     pgtype.UUID        `json:"avatar_id"`
 	CreatedAt    pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt    pgtype.Timestamptz `json:"updated_at"`
 }

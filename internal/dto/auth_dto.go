@@ -1,9 +1,12 @@
 package dto
 
+import "github.com/jackc/pgx/v5/pgtype"
+
 type SignUpRequest struct {
-	Email    string `json:"email"`
-	Nickname string `json:"nickname"`
-	Password string `json:"password"`
+	Email    string      `json:"email"`
+	Nickname string      `json:"nickname"`
+	Password string      `json:"password"`
+	AvatarID pgtype.UUID `json:"avatar_id"`
 }
 
 type LoginRequest struct {

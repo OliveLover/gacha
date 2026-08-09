@@ -44,6 +44,7 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		ID:       user.ID,
 		Email:    user.Email,
 		Nickname: user.Nickname,
+		AvatarID: user.AvatarID,
 	}
 
 	c.JSON(http.StatusCreated, res)
