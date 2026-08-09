@@ -21,6 +21,7 @@ func SetupRoutes(r *gin.Engine, pageHandler *handler.PageHandler, authHandler *h
 	v1 := r.Group("/api/v1")
 	{
 		v1.POST("/signup", authHandler.Signup)
+		v1.POST("/login", authHandler.Login)
 	}
 
 }

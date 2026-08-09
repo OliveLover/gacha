@@ -6,6 +6,20 @@ definitions:
         example: invalid request
         type: string
     type: object
+  dto.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.LoginResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/dto.UserResponse'
+    type: object
   dto.SignUpRequest:
     properties:
       email:
@@ -13,6 +27,15 @@ definitions:
       nickname:
         type: string
       password:
+        type: string
+    type: object
+  dto.UserResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      nickname:
         type: string
     type: object
   pgtype.InfinityModifier:
@@ -56,6 +79,39 @@ info:
   title: Project Gacha
   version: "1.0"
 paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: 이메일/비밀번호로 사용자를 인증하고 JWT를 발급합니다.
+      parameters:
+      - description: 로그인 정보
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              message:
+                $ref: '#/definitions/dto.LoginResponse'
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 로그인
+      tags:
+      - users
   /signup:
     post:
       consumes:

@@ -40,5 +40,47 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": user})
+	res := dto.UserResponse{
+		ID:       user.ID,
+		Email:    user.Email,
+		Nickname: user.Nickname,
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": res})
+}
+
+// Login godoc
+// @Summary		로그인
+// @Description	이메일/비밀번호로 사용자를 인증하고 JWT를 발급합니다.
+// @Tags		users
+// @Accept		json
+// @Produce		json
+// @Param		request	body		dto.LoginRequest	true	"로그인 정보"
+// @Success		200		{object}	object{message=dto.LoginResponse}
+// @Failure		400		{object}	dto.ErrorResponse
+// @Failure		500		{object}	dto.ErrorResponse
+// @Router		/login	[post]
+func (h *AuthHandler) Login(c *gin.Context) {
+	var req dto.LoginRequest
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	token, user, err := h.authService.Authenticate(c.Request.Context(), req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	res := dto.LoginResponse{
+		Token: token,
+		User: dto.UserResponse{
+			ID:       user.ID,
+			Email:    user.Email,
+			Nickname: user.Nickname,
+		},
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": res})
 }
