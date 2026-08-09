@@ -43,12 +43,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "message": {
-                                    "$ref": "#/definitions/dto.LoginResponse"
-                                }
-                            }
+                            "$ref": "#/definitions/dto.LoginResponse"
                         }
                     },
                     "400": {
@@ -94,12 +89,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "message": {
-                                    "$ref": "#/definitions/sqlc.User"
-                                }
-                            }
+                            "$ref": "#/definitions/dto.UserResponse"
                         }
                     },
                     "400": {
@@ -175,57 +165,6 @@ const docTemplate = `{
                 },
                 "nickname": {
                     "type": "string"
-                }
-            }
-        },
-        "pgtype.InfinityModifier": {
-            "type": "integer",
-            "format": "int32",
-            "enum": [
-                1,
-                0,
-                -1
-            ],
-            "x-enum-varnames": [
-                "Infinity",
-                "Finite",
-                "NegativeInfinity"
-            ]
-        },
-        "pgtype.Timestamptz": {
-            "type": "object",
-            "properties": {
-                "infinityModifier": {
-                    "$ref": "#/definitions/pgtype.InfinityModifier"
-                },
-                "time": {
-                    "type": "string"
-                },
-                "valid": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "sqlc.User": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "$ref": "#/definitions/pgtype.Timestamptz"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "nickname": {
-                    "type": "string"
-                },
-                "password_hash": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "$ref": "#/definitions/pgtype.Timestamptz"
                 }
             }
         }

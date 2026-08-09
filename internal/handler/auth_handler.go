@@ -23,7 +23,7 @@ func NewAuthHandler(authService *service.AuthService) *AuthHandler {
 // @Accept		json
 // @Produce		json
 // @Param		request	body		dto.SignUpRequest	true	"회원가입 정보"
-// @Success		201		{object}	object{message=sqlc.User}
+// @Success		201		{object}	dto.UserResponse
 // @Failure		400		{object}	dto.ErrorResponse
 // @Failure		500		{object}	dto.ErrorResponse
 // @Router		/signup	[post]
@@ -46,7 +46,7 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		Nickname: user.Nickname,
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": res})
+	c.JSON(http.StatusCreated, res)
 }
 
 // Login godoc
@@ -56,7 +56,7 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 // @Accept		json
 // @Produce		json
 // @Param		request	body		dto.LoginRequest	true	"로그인 정보"
-// @Success		200		{object}	object{message=dto.LoginResponse}
+// @Success		200		{object}	dto.LoginResponse
 // @Failure		400		{object}	dto.ErrorResponse
 // @Failure		500		{object}	dto.ErrorResponse
 // @Router		/login	[post]
@@ -82,5 +82,5 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		},
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": res})
+	c.JSON(http.StatusOK, res)
 }

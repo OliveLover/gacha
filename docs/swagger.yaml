@@ -38,41 +38,6 @@ definitions:
       nickname:
         type: string
     type: object
-  pgtype.InfinityModifier:
-    enum:
-    - 1
-    - 0
-    - -1
-    format: int32
-    type: integer
-    x-enum-varnames:
-    - Infinity
-    - Finite
-    - NegativeInfinity
-  pgtype.Timestamptz:
-    properties:
-      infinityModifier:
-        $ref: '#/definitions/pgtype.InfinityModifier'
-      time:
-        type: string
-      valid:
-        type: boolean
-    type: object
-  sqlc.User:
-    properties:
-      created_at:
-        $ref: '#/definitions/pgtype.Timestamptz'
-      email:
-        type: string
-      id:
-        type: string
-      nickname:
-        type: string
-      password_hash:
-        type: string
-      updated_at:
-        $ref: '#/definitions/pgtype.Timestamptz'
-    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -97,10 +62,7 @@ paths:
         "200":
           description: OK
           schema:
-            properties:
-              message:
-                $ref: '#/definitions/dto.LoginResponse'
-            type: object
+            $ref: '#/definitions/dto.LoginResponse'
         "400":
           description: Bad Request
           schema:
@@ -130,10 +92,7 @@ paths:
         "201":
           description: Created
           schema:
-            properties:
-              message:
-                $ref: '#/definitions/sqlc.User'
-            type: object
+            $ref: '#/definitions/dto.UserResponse'
         "400":
           description: Bad Request
           schema:
