@@ -132,6 +132,7 @@ function showProfile(nickname, avatar) {
         : nickname.charAt(0).toUpperCase();
 
     document.getElementById('profile-nickname').innerText = nickname;
+    document.getElementById('header-nickname').innerText = nickname;
 
     renderHeaderAvatarPicker(avatar);
 }

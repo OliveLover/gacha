@@ -31,11 +31,11 @@ func main() {
 
 	pageHandler := handler.NewPageHandler()
 
-	authService := service.NewAuthService(db.Queries)
-	authHandler := handler.NewAuthHandler(authService)
-
 	avatarService := service.NewAvatarService(db.Queries)
 	avatarHandler := handler.NewAvatarHandler(avatarService)
+
+	authService := service.NewAuthService(db.Queries)
+	authHandler := handler.NewAuthHandler(authService, avatarService)
 
 	r := gin.Default()
 	route.SetupRoutes(r, pageHandler, authHandler, avatarHandler)

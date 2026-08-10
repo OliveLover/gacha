@@ -46,7 +46,7 @@ definitions:
     type: object
   dto.UserResponse:
     properties:
-      avatar_id:
+      avatar:
         type: string
       email:
         type: string
@@ -78,6 +78,33 @@ paths:
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
       summary: 아바타 목록 조회
+      tags:
+      - avatars
+  /avatars/{id}:
+    get:
+      description: 활성화된 아바타를 ID로 조회합니다.
+      parameters:
+      - description: 아바타 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AvatarResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 아바타 조회
       tags:
       - avatars
   /login:

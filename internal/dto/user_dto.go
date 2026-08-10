@@ -6,5 +6,5 @@ type UserResponse struct {
 	ID       pgtype.UUID `json:"id"`
 	Email    string      `json:"email"`
 	Nickname string      `json:"nickname"`
-	AvatarID pgtype.UUID `json:"avatar_id"`
+	Avatar   string      `json:"avatar"`
 }

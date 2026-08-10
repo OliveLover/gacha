@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"gacha/db/sqlc"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type AvatarService struct {
@@ -20,4 +22,13 @@ func (s *AvatarService) ListActiveAvatars(ctx context.Context) ([]sqlc.Avatar, e
 	}
 
 	return avatars, nil
+}
+
+func (s *AvatarService) GetAvatarByID(ctx context.Context, avatarID pgtype.UUID) (sqlc.Avatar, error) {
+	avatar, err := s.queries.GetAvatarByID(ctx, avatarID)
+	if err != nil {
+		return sqlc.Avatar{}, err
+	}
+
+	return avatar, nil
 }

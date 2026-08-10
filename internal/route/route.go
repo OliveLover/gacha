@@ -24,6 +24,7 @@ func SetupRoutes(r *gin.Engine, pageHandler *handler.PageHandler, authHandler *h
 		v1.POST("/login", authHandler.Login)
 
 		v1.GET("/avatars", avatarHandler.ListAvatars)
+		v1.GET("/avatars/:avatarID", avatarHandler.GetAvatar)
 	}
 
 }

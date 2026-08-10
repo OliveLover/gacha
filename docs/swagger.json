@@ -37,6 +37,47 @@
                 }
             }
         },
+        "/avatars/{id}": {
+            "get": {
+                "description": "활성화된 아바타를 ID로 조회합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "avatars"
+                ],
+                "summary": "아바타 조회",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "아바타 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AvatarResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "이메일/비밀번호로 사용자를 인증하고 JWT를 발급합니다.",
@@ -202,7 +243,7 @@
         "dto.UserResponse": {
             "type": "object",
             "properties": {
-                "avatar_id": {
+                "avatar": {
                     "type": "string"
                 },
                 "email": {

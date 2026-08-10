@@ -73,6 +73,18 @@ body {
     margin-bottom: 0.4rem;
 }
 
+#profile-area {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header-nickname {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #3d3a1e;
+}
+
 /* ==================
    Pages
    ================== */

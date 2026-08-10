@@ -6,14 +6,31 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type AuthHandler struct {
-	authService *service.AuthService
+	authService   *service.AuthService
+	avatarService *service.AvatarService
 }
 
-func NewAuthHandler(authService *service.AuthService) *AuthHandler {
-	return &AuthHandler{authService: authService}
+func NewAuthHandler(authService *service.AuthService, avatarService *service.AvatarService) *AuthHandler {
+	return &AuthHandler{authService: authService, avatarService: avatarService}
+}
+
+// resolveAvatarKey는 avatar_id를 실제 이미지 경로(key)로 변환.
+// 아바타가 없거나 조회에 실패하면 빈 문자열을 반환.
+func (h *AuthHandler) resolveAvatarKey(c *gin.Context, avatarID pgtype.UUID) string {
+	if !avatarID.Valid {
+		return ""
+	}
+
+	avatar, err := h.avatarService.GetAvatarByID(c.Request.Context(), avatarID)
+	if err != nil {
+		return ""
+	}
+
+	return avatar.Key
 }
 
 // SignUp godoc
@@ -44,7 +61,7 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		ID:       user.ID,
 		Email:    user.Email,
 		Nickname: user.Nickname,
-		AvatarID: user.AvatarID,
+		Avatar:   h.resolveAvatarKey(c, user.AvatarID),
 	}
 
 	c.JSON(http.StatusCreated, res)
@@ -80,6 +97,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 			ID:       user.ID,
 			Email:    user.Email,
 			Nickname: user.Nickname,
+			Avatar:   h.resolveAvatarKey(c, user.AvatarID),
 		},
 	}
 

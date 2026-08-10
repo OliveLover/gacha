@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type AvatarHandler struct {
@@ -40,6 +41,40 @@ func (h *AvatarHandler) ListAvatars(c *gin.Context) {
 			IsActive:  avatar.IsActive,
 			SortOrder: avatar.SortOrder,
 		})
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// GetAvatar godoc
+// @Summary		아바타 조회
+// @Description	활성화된 아바타를 ID로 조회합니다.
+// @Tags		avatars
+// @Produce		json
+// @Param		id	path		string	true	"아바타 ID"
+// @Success		200	{object}	dto.AvatarResponse
+// @Failure		400	{object}	dto.ErrorResponse
+// @Failure		500	{object}	dto.ErrorResponse
+// @Router		/avatars/{id}	[get]
+func (h *AvatarHandler) GetAvatar(c *gin.Context) {
+	var avatarID pgtype.UUID
+	if err := avatarID.Scan(c.Param("avatarID")); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	avatar, err := h.avatarService.GetAvatarByID(c.Request.Context(), avatarID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	res := dto.AvatarResponse{
+		ID:        avatar.ID,
+		Name:      avatar.Name,
+		Key:       avatar.Key,
+		IsActive:  avatar.IsActive,
+		SortOrder: avatar.SortOrder,
 	}
 
 	c.JSON(http.StatusOK, res)
