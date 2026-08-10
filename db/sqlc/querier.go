@@ -15,6 +15,7 @@ type Querier interface {
 	GetAvatarByID(ctx context.Context, id pgtype.UUID) (Avatar, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	ListActiveAvatars(ctx context.Context) ([]Avatar, error)
+	UpdateUserAvatar(ctx context.Context, arg UpdateUserAvatarParams) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)

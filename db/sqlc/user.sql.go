@@ -63,3 +63,31 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 	)
 	return i, err
 }
+
+const updateUserAvatar = `-- name: UpdateUserAvatar :one
+UPDATE users
+SET avatar_id   = $2,
+    updated_at  = NOW()
+WHERE id = $1
+RETURNING id, email, nickname, password_hash, avatar_id, created_at, updated_at
+`
+
+type UpdateUserAvatarParams struct {
+	ID       pgtype.UUID `json:"id"`
+	AvatarID pgtype.UUID `json:"avatar_id"`
+}
+
+func (q *Queries) UpdateUserAvatar(ctx context.Context, arg UpdateUserAvatarParams) (User, error) {
+	row := q.db.QueryRow(ctx, updateUserAvatar, arg.ID, arg.AvatarID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Nickname,
+		&i.PasswordHash,
+		&i.AvatarID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}

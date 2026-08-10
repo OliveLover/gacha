@@ -8,3 +8,7 @@ type UserResponse struct {
 	Nickname string      `json:"nickname"`
 	Avatar   string      `json:"avatar"`
 }
+
+type UpdateAvatarRequest struct {
+	AvatarID pgtype.UUID `json:"avatar_id"`
+}
