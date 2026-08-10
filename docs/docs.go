@@ -15,6 +15,35 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/avatars": {
+            "get": {
+                "description": "활성화된 아바타 목록을 정렬 순서대로 조회합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "avatars"
+                ],
+                "summary": "아바타 목록 조회",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.AvatarResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "이메일/비밀번호로 사용자를 인증하고 JWT를 발급합니다.",
@@ -109,6 +138,26 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.AvatarResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sort_order": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -143,6 +192,9 @@ const docTemplate = `{
         "dto.SignUpRequest": {
             "type": "object",
             "properties": {
+                "avatar_id": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -157,6 +209,9 @@ const docTemplate = `{
         "dto.UserResponse": {
             "type": "object",
             "properties": {
+                "avatar_id": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },

@@ -16,6 +16,14 @@ func NewAvatarHandler(avatarService *service.AvatarService) *AvatarHandler {
 	return &AvatarHandler{avatarService: avatarService}
 }
 
+// ListAvatars godoc
+// @Summary		아바타 목록 조회
+// @Description	활성화된 아바타 목록을 정렬 순서대로 조회합니다.
+// @Tags		avatars
+// @Produce		json
+// @Success		200	{array}		dto.AvatarResponse
+// @Failure		500	{object}	dto.ErrorResponse
+// @Router		/avatars	[get]
 func (h *AvatarHandler) ListAvatars(c *gin.Context) {
 	avatars, err := h.avatarService.ListActiveAvatars(c.Request.Context())
 	if err != nil {

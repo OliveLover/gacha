@@ -1,5 +1,18 @@
 basePath: /api/v1
 definitions:
+  dto.AvatarResponse:
+    properties:
+      id:
+        type: string
+      is_active:
+        type: boolean
+      key:
+        type: string
+      name:
+        type: string
+      sort_order:
+        type: integer
+    type: object
   dto.ErrorResponse:
     properties:
       error:
@@ -22,6 +35,8 @@ definitions:
     type: object
   dto.SignUpRequest:
     properties:
+      avatar_id:
+        type: string
       email:
         type: string
       nickname:
@@ -31,6 +46,8 @@ definitions:
     type: object
   dto.UserResponse:
     properties:
+      avatar_id:
+        type: string
       email:
         type: string
       id:
@@ -44,6 +61,25 @@ info:
   title: Project Gacha
   version: "1.0"
 paths:
+  /avatars:
+    get:
+      description: 활성화된 아바타 목록을 정렬 순서대로 조회합니다.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AvatarResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 아바타 목록 조회
+      tags:
+      - avatars
   /login:
     post:
       consumes:
