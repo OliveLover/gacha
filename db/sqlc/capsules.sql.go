@@ -60,3 +60,15 @@ func (q *Queries) DrawCapsule(ctx context.Context) (Capsule, error) {
 	)
 	return i, err
 }
+
+const getCapsuleCount = `-- name: GetCapsuleCount :one
+SELECT COUNT(*) FROM capsules
+ WHERE drawn_at IS NULL
+`
+
+func (q *Queries) GetCapsuleCount(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, getCapsuleCount)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}

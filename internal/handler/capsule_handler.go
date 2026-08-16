@@ -59,6 +59,24 @@ func (h *CapsuleHandler) CreateCapsule(c *gin.Context) {
 	c.JSON(http.StatusCreated, res)
 }
 
+// GetCapsuleCount godoc
+// @Summary		현재 남은 캡슐의 개수
+// @Description	아직 뽑히지 않은 캡슐의 개수를 반환합니다.
+// @Tags		capsules
+// @Produce		json
+// @Success		200	{object}	dto.CapsuleCountResponse
+// @Failure		500	{object}	dto.ErrorResponse
+// @Router		/capsules/count	[get]
+func (h *CapsuleHandler) GetCapsuleCount(c *gin.Context) {
+	count, err := h.capsuleService.GetCapsuleCount(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.CapsuleCountResponse{Count: count})
+}
+
 // DrawCapsule godoc
 // @Summary		캡슐 1개 랜덤 뽑기
 // @Description	아직 뽑히지 않은 캡슐 중 하나를 랜덤으로 뽑아 메시지와 작성자 닉네임을 반환합니다.

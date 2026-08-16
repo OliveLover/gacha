@@ -3,6 +3,10 @@ INSERT INTO capsules (user_id, message)
 VALUES ($1, $2)
 RETURNING *;
 
+-- name: GetCapsuleCount :one
+SELECT COUNT(*) FROM capsules
+ WHERE drawn_at IS NULL;
+
 -- name: DrawCapsule :one
 UPDATE capsules
 SET drawn_at = NOW()

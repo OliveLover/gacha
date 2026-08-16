@@ -38,6 +38,7 @@ func SetupRoutes(r *gin.Engine, h Handlers) {
 		v1.PUT("/users/avatar", middleware.AuthMiddleware(), h.User.UpdateUserAvatar)
 
 		v1.POST("/capsules", middleware.AuthMiddleware(), h.Capsule.CreateCapsule)
+		v1.GET("/capsules/count", h.Capsule.GetCapsuleCount)
 		v1.POST("/capsules/draw", middleware.AuthMiddleware(), h.Capsule.DrawCapsule)
 	}
 

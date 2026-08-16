@@ -175,7 +175,150 @@ async function changeAvatar(id) {
 }
 
 const CAPSULE_COLORS = ['gray', 'red', 'yellow', 'pink', 'blue', 'green', 'brown', 'purple'];
+
+// 캡슐이 채워질 좌표(아래 줄부터 순서대로, 아래쪽에 뭉쳐서 쌓이도록). .capsule-pile 기준 %.
+// 각도(rot)를 조금씩 다르게 줘서 흐트러진 무더기처럼 보이게 함.
+const CAPSULE_SLOTS = [
+    { x: 25, y: 78, rot: -12 },
+    { x: 38, y: 78, rot: 8 },
+    { x: 51, y: 78, rot: -5 },
+    { x: 64, y: 78, rot: 14 },
+    { x: 78, y: 78, rot: -9 },
+    { x: 25, y: 66, rot: 10 },
+    { x: 33, y: 66, rot: -14 },
+    { x: 44, y: 66, rot: 6 },
+    { x: 55, y: 66, rot: -8 },
+    { x: 66, y: 66, rot: 13 },
+    { x: 77, y: 66, rot: -6 },
+    { x: 27, y: 54, rot: -10 },
+    { x: 42, y: 54, rot: 9 },
+    { x: 57, y: 54, rot: -13 },
+    { x: 72, y: 54, rot: 7 },
+    { x: 33, y: 42, rot: -7 },
+    { x: 50, y: 42, rot: 11 },
+    { x: 67, y: 42, rot: -4 },
+];
+const MAX_CAPSULE_PILE = CAPSULE_SLOTS.length;
 let isPulling = false;
+
+function randomCapsuleImg(slot) {
+    const color = CAPSULE_COLORS[Math.floor(Math.random() * CAPSULE_COLORS.length)];
+    const img = document.createElement('img');
+    img.src = `/static/images/objects/capsule_${color}.png`;
+    img.alt = '';
+    img.dataset.color = color;
+    img.style.left = `${slot.x}%`;
+    img.style.top = `${slot.y}%`;
+    img.style.setProperty('--rot', `${slot.rot || 0}deg`);
+    img.style.setProperty('--shake', `${(Math.random() * 6 - 3).toFixed(1)}px`);
+    img.style.setProperty('--shake-delay', `-${(Math.random() * 0.18).toFixed(2)}s`);
+    return img;
+}
+
+async function initCapsulePile() {
+    const pile = document.getElementById('capsule-pile');
+    if (!pile) return;
+
+    try {
+        const res = await fetch('/api/v1/capsules/count');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || '캡슐 개수를 불러오지 못했습니다.');
+
+        const shown = Math.min(data.count, MAX_CAPSULE_PILE);
+        pile.innerHTML = '';
+        for (let i = 0; i < shown; i++) {
+            pile.appendChild(randomCapsuleImg(CAPSULE_SLOTS[i]));
+        }
+    } catch (e) {
+        pile.innerHTML = '';
+    }
+}
+
+function addCapsuleToPile() {
+    const pile = document.getElementById('capsule-pile');
+    if (!pile || pile.children.length >= MAX_CAPSULE_PILE) return;
+
+    const img = randomCapsuleImg(CAPSULE_SLOTS[pile.children.length]);
+    img.classList.add('capsule-enter');
+    pile.appendChild(img);
+
+    requestAnimationFrame(() => {
+        img.classList.remove('capsule-enter');
+    });
+}
+
+function removeCapsuleFromPile() {
+    const pile = document.getElementById('capsule-pile');
+    if (!pile || !pile.lastElementChild) return null;
+    const removed = pile.lastElementChild;
+    const color = removed.dataset.color;
+    pile.removeChild(removed);
+    return color;
+}
+
+let lastDrawnCapsule = null;
+
+// 클릭한 시점의 통통 튀는/그림자 흔들림 애니메이션 상태를 그대로 굳혀서 멈춤.
+function freezeCapsuleHop() {
+    const capsule = document.getElementById('gacha-capsule');
+    if (!capsule.classList.contains('drop')) return;
+
+    const computed = getComputedStyle(capsule).transform;
+    capsule.style.transformOrigin = 'bottom center';
+    capsule.style.transform = computed === 'none' ? 'translate(-50%, 0)' : computed;
+    capsule.style.opacity = getComputedStyle(capsule).opacity;
+    capsule.style.animation = 'none';
+    capsule.classList.remove('drop');
+
+    const shadow = document.getElementById('gacha-capsule-shadow');
+    const shadowComputed = getComputedStyle(shadow).transform;
+    shadow.style.transform = shadowComputed === 'none' ? 'translate(-50%, 0)' : shadowComputed;
+    shadow.style.opacity = getComputedStyle(shadow).opacity;
+    shadow.style.animation = 'none';
+    shadow.classList.remove('show');
+}
+
+// 모달을 닫으면 캡슐이 점점 사라지며 제거됨(메시지를 다 읽었다는 의미).
+function dismissCapsule() {
+    const capsule = document.getElementById('gacha-capsule');
+    if (capsule.style.display === 'none' || !lastDrawnCapsule) return;
+
+    lastDrawnCapsule = null;
+
+    // 그림자는 캡슐과 별개로 fade하지 않고, 캡슐이 사라지기 시작하는 순간 바로 사라짐
+    const shadow = document.getElementById('gacha-capsule-shadow');
+    shadow.style.transition = '';
+    shadow.style.animation = 'none';
+    shadow.style.opacity = '0';
+
+    capsule.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    void capsule.offsetHeight; // 강제 리플로우
+    capsule.style.opacity = '0';
+    capsule.style.transform = `${capsule.style.transform} translateY(-16px) scale(0.75)`;
+
+    setTimeout(() => {
+        capsule.style.display = 'none';
+        capsule.style.transition = '';
+        shadow.style.transform = '';
+        shadow.style.opacity = '';
+    }, 620);
+}
+
+function showCapsuleModal() {
+    if (!lastDrawnCapsule) return;
+
+    freezeCapsuleHop();
+
+    document.getElementById('modal-capsule-nickname').innerText =
+        `${lastDrawnCapsule.nickname}님의 메시지`;
+    document.getElementById('modal-capsule-message').innerText = lastDrawnCapsule.message;
+
+    const modalEl = document.getElementById('capsule-modal');
+    bootstrap.Modal.getOrCreateInstance(modalEl).show();
+}
+
+const capsuleModalEl = document.getElementById('capsule-modal');
+if (capsuleModalEl) capsuleModalEl.addEventListener('hidden.bs.modal', dismissCapsule);
 
 function pullGacha() {
     if (isPulling) return;
@@ -191,11 +334,24 @@ function pullGacha() {
 
     const knobImg = document.getElementById('knob-img');
     const capsule = document.getElementById('gacha-capsule');
-    const result = document.getElementById('capsule-result');
 
     capsule.classList.remove('drop');
     capsule.style.display = 'none';
-    result.classList.add('d-none');
+    capsule.style.transition = '';
+    capsule.style.animation = '';
+    capsule.style.opacity = '';
+    capsule.style.transform = '';
+    capsule.style.transformOrigin = '';
+
+    const shadow = document.getElementById('gacha-capsule-shadow');
+    shadow.classList.remove('show');
+    shadow.style.transition = '';
+    shadow.style.animation = '';
+    shadow.style.opacity = '';
+    shadow.style.transform = '';
+
+    const pile = document.getElementById('capsule-pile');
+    pile.classList.add('shaking');
 
     let frame = 0;
     const totalSpins = 8;
@@ -207,6 +363,7 @@ function pullGacha() {
         if (frame >= totalSpins) {
             clearInterval(spinInterval);
             knobImg.src = '/static/images/objects/machine-labor_1.png';
+            pile.classList.remove('shaking');
 
             try {
                 const res = await fetch('/api/v1/capsules/draw', {
@@ -220,18 +377,19 @@ function pullGacha() {
                     throw new Error(data.error || '캡슐을 뽑지 못했습니다.');
                 }
 
-                const color = CAPSULE_COLORS[Math.floor(Math.random() * CAPSULE_COLORS.length)];
+                lastDrawnCapsule = { nickname: data.nickname, message: data.message };
+
+                const removedColor = removeCapsuleFromPile();
+                const color =
+                    removedColor ||
+                    CAPSULE_COLORS[Math.floor(Math.random() * CAPSULE_COLORS.length)];
                 capsule.src = `/static/images/objects/capsule_${color}.png`;
                 capsule.style.display = 'block';
-                requestAnimationFrame(() => capsule.classList.add('drop'));
-
-                document.getElementById('capsule-result-nickname').innerText = `${data.nickname}님의 메시지`;
-                document.getElementById('capsule-result-message').innerText = data.message;
-                result.classList.remove('d-none');
+                void capsule.offsetHeight; // 강제 리플로우: display:block 상태를 먼저 그리게 함
+                capsule.classList.add('drop');
+                shadow.classList.add('show');
             } catch (e) {
-                document.getElementById('capsule-result-nickname').innerText = '';
-                document.getElementById('capsule-result-message').innerText = e.message;
-                result.classList.remove('d-none');
+                alert(e.message);
             } finally {
                 isPulling = false;
             }
@@ -271,8 +429,11 @@ async function submitCapsule(e) {
         }
 
         textarea.value = '';
-        messageEl.innerText = '캡슐에 담았습니다!';
-        messageEl.style.color = 'green';
+        messageEl.innerText = '';
+        addCapsuleToPile();
+
+        const modalEl = document.getElementById('capsule-write-modal');
+        bootstrap.Modal.getOrCreateInstance(modalEl).hide();
     } catch (e) {
         messageEl.innerText = e.message;
         messageEl.style.color = '#d33';
@@ -289,6 +450,7 @@ const capsuleForm = document.getElementById('capsule-form');
 if (capsuleForm) capsuleForm.addEventListener('submit', submitCapsule);
 
 renderAvatarPicker();
+initCapsulePile();
 
 const nickname = localStorage.getItem('nickname');
 if (nickname && document.getElementById('profile-area')) {

@@ -27,6 +27,15 @@ func (s *CapsuleService) CreateCapsule(ctx context.Context, userID pgtype.UUID, 
 	return capsule, nil
 }
 
+func (s *CapsuleService) GetCapsuleCount(ctx context.Context) (int64, error) {
+	count, err := s.queries.GetCapsuleCount(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 func (s *CapsuleService) DrawCapsule(ctx context.Context) (sqlc.Capsule, error) {
 	capsule, err := s.queries.DrawCapsule(ctx)
 	if err != nil {

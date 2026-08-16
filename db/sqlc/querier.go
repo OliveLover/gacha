@@ -15,6 +15,7 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DrawCapsule(ctx context.Context) (Capsule, error)
 	GetAvatarByID(ctx context.Context, id pgtype.UUID) (Avatar, error)
+	GetCapsuleCount(ctx context.Context) (int64, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserByUserID(ctx context.Context, id pgtype.UUID) (User, error)
 	ListActiveAvatars(ctx context.Context) ([]Avatar, error)

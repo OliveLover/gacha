@@ -98,27 +98,76 @@ body {
 
 .gacha-section {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    padding: 3rem 0;
+    gap: 1.5rem;
+    min-height: 75vh;
+    padding: 3rem 1rem;
 }
 
 .gacha-machine {
     position: relative;
-    width: 192px;
-    height: 288px;
+    width: 320px;
+    height: 480px;
 }
 
 .machine-img {
     width: 100%;
     height: 100%;
     image-rendering: pixelated;
+    filter: drop-shadow(4px 14px 10px rgba(0, 0, 0, 0.5));
+}
+
+.capsule-pile {
+    position: absolute;
+    top: 24%;
+    left: 5%;
+    right: 4%;
+    bottom: 35%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.capsule-pile img {
+    position: absolute;
+    width: 50%;
+    transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
+    image-rendering: pixelated;
+    opacity: 1;
+    filter: drop-shadow(2px 8px 4px rgba(0, 0, 0, 0.5));
+    transition:
+        transform 0.25s ease,
+        opacity 0.2s ease;
+}
+
+/* 레버를 돌리는 동안 캡슐마다 조금씩 다른 폭/타이밍으로 제각각 흔들림 */
+.capsule-pile.shaking img {
+    animation: capsule-jiggle 0.18s ease-in-out infinite;
+    animation-delay: var(--shake-delay, 0s);
+}
+
+@keyframes capsule-jiggle {
+    0%,
+    100% {
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
+    }
+    50% {
+        transform: translate(calc(-50% + var(--shake, 3px)), -50%) rotate(var(--rot, 0deg));
+    }
+}
+
+.capsule-pile img.capsule-enter {
+    opacity: 0;
+    transform: translate(-50%, -70%) rotate(var(--rot, 0deg));
 }
 
 .machine-knob {
     position: absolute;
-    top: 38%;
-    right: -8%;
-    width: 15%;
+    top: 79.2%;
+    left: 72%;
+    width: 50%;
+    transform: translate(-50%, -50%);
     border: none;
     background: transparent;
     padding: 0;
@@ -133,41 +182,178 @@ body {
 
 .gacha-capsule {
     position: absolute;
-    bottom: 6%;
-    left: 50%;
-    width: 22%;
+    bottom: -140px;
+    left: 33%;
+    width: 60%;
     image-rendering: pixelated;
     display: none;
     opacity: 0;
-    transform: translate(-50%, -20px);
-    transition:
-        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-        opacity 0.2s;
+    cursor: pointer;
+    transform: translate(-50%, -120px);
+}
+
+.capsule-shadow {
+    position: absolute;
+    bottom: -95px;
+    left: calc(33% - 5px);
+    width: 40%;
+    height: 30px;
+    transform: translate(-50%, 0) scale(0.3);
+    border-radius: 50%;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0.25) 40%,
+        rgba(0, 0, 0, 0) 50%
+    );
+    filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* 캡슐이 떨어지는 동안(0~38%) 옅고 작다가 착지 시점부터는
+   capsule-fall-bounce의 스쿼시/호핑 타이밍에 맞춰 그림자도 커졌다 작아졌다 함
+   (캡슐이 바닥에 눌릴 때 = 크고 진하게, 위로 튈 때 = 작고 옅게) */
+.capsule-shadow.show {
+    animation:
+        capsule-shadow-pulse 1s forwards,
+        capsule-shadow-wiggle 2.4s ease-in-out 1.6s infinite;
+}
+
+/* capsule-wiggle과 같은 타이밍으로 그림자도 좌우로 살짝 따라 움직임 */
+@keyframes capsule-shadow-wiggle {
+    0%,
+    20%,
+    100% {
+        transform: translate(-50%, 0) scale(1);
+    }
+    4% {
+        transform: translate(calc(-50% - 4px), 0) scale(1);
+    }
+    8% {
+        transform: translate(calc(-50% + 4px), 0) scale(1);
+    }
+    12% {
+        transform: translate(calc(-50% - 4px), 0) scale(1);
+    }
+    16% {
+        transform: translate(calc(-50% + 4px), 0) scale(1);
+    }
+}
+
+@keyframes capsule-shadow-pulse {
+    0% {
+        animation-timing-function: linear;
+        transform: translate(-50%, 0) scale(0.3);
+        opacity: 0;
+    }
+    38% {
+        animation-timing-function: ease-out;
+        transform: translate(-50%, 0) scale(1);
+        opacity: 0.85;
+    }
+    47% {
+        transform: translate(-50%, 0) scale(1.3);
+        opacity: 1;
+    }
+    58% {
+        transform: translate(-50%, 0) scale(0.55);
+        opacity: 0.45;
+    }
+    70% {
+        transform: translate(-50%, 0) scale(1.15);
+        opacity: 0.95;
+    }
+    82% {
+        transform: translate(-50%, 0) scale(0.75);
+        opacity: 0.6;
+    }
+    92% {
+        transform: translate(-50%, 0) scale(1.05);
+        opacity: 0.85;
+    }
+    100% {
+        transform: translate(-50%, 0) scale(1);
+        opacity: 0.85;
+    }
 }
 
 .gacha-capsule.drop {
-    opacity: 1;
-    transform: translate(-50%, 0);
+    transform-origin: bottom center;
+    animation:
+        capsule-fall-bounce 1s forwards,
+        capsule-wiggle 2.4s ease-in-out 1.6s infinite;
 }
 
-.capsule-result {
-    max-width: 360px;
-    margin: 0 auto 1.5rem;
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
-    background-color: rgba(255, 255, 255, 0.7);
-    text-align: center;
+/* 0~38%: 등속으로 뚝 떨어짐(linear). 38% 이후: 착지와 동시에 바로 이어지는 바운스 */
+@keyframes capsule-fall-bounce {
+    0% {
+        animation-timing-function: linear;
+        transform: translate(-50%, -120px) scale(1, 1);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    38% {
+        animation-timing-function: ease-out;
+        transform: translate(-50%, 0) scale(1, 1);
+        opacity: 1;
+    }
+    47% {
+        transform: translate(-50%, 0) scale(1.35, 0.6);
+    }
+    58% {
+        transform: translate(-50%, -30px) scale(0.85, 1.2);
+    }
+    70% {
+        transform: translate(-50%, 0) scale(1.22, 0.75);
+    }
+    82% {
+        transform: translate(-50%, -12px) scale(0.93, 1.08);
+    }
+    92% {
+        transform: translate(-50%, 0) scale(1.08, 0.94);
+    }
+    100% {
+        transform: translate(-50%, 0) scale(1, 1);
+        opacity: 1;
+    }
 }
 
-.capsule-result-nickname {
+/* 착지(fall-bounce 종료, 1s) 후 0.6s 텀을 두고 시작.
+   몬스터볼처럼 좌우좌우 빠르게 흔들고 한동안 멈췄다가 반복 */
+@keyframes capsule-wiggle {
+    0%,
+    20%,
+    100% {
+        transform: translate(-50%, 0) rotate(0deg);
+    }
+    4% {
+        transform: translate(-50%, 0) rotate(-10deg);
+    }
+    8% {
+        transform: translate(-50%, 0) rotate(10deg);
+    }
+    12% {
+        transform: translate(-50%, 0) rotate(-10deg);
+    }
+    16% {
+        transform: translate(-50%, 0) rotate(10deg);
+    }
+}
+
+.capsule-modal-content {
+    border-radius: 16px;
+}
+
+#modal-capsule-nickname {
+    color: #3d3a1e;
     font-weight: 700;
-    color: #3d3a1e;
-    margin-bottom: 0.25rem;
 }
 
-.capsule-result-message {
+#modal-capsule-message {
     color: #3d3a1e;
-    margin-bottom: 0;
     word-break: break-word;
 }
 

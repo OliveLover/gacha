@@ -63,12 +63,22 @@
         </header>
 
         <main class="gacha-section">
+            <button
+                type="button"
+                class="btn auth-submit-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#capsule-write-modal"
+            >
+                캡슐에 담기
+            </button>
+
             <div class="gacha-machine">
                 <img
                     src="/static/images/objects/capsule-machin.png"
                     class="machine-img"
                     alt="가챠 머신"
                 />
+                <div id="capsule-pile" class="capsule-pile"></div>
                 <button class="machine-knob" id="gacha-knob" onclick="pullGacha()">
                     <img
                         id="knob-img"
@@ -76,26 +86,65 @@
                         alt="손잡이"
                     />
                 </button>
-                <img id="gacha-capsule" class="gacha-capsule" alt="캡슐" />
+                <div id="gacha-capsule-shadow" class="capsule-shadow"></div>
+                <img
+                    id="gacha-capsule"
+                    class="gacha-capsule"
+                    alt="캡슐"
+                    onclick="showCapsuleModal()"
+                />
             </div>
 
-            <div id="capsule-result" class="capsule-result d-none">
-                <p id="capsule-result-nickname" class="capsule-result-nickname"></p>
-                <p id="capsule-result-message" class="capsule-result-message"></p>
+            <div class="modal fade" id="capsule-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content capsule-modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-capsule-nickname"></h5>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="modal-capsule-message" class="mb-0"></p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <form id="capsule-form" class="capsule-form">
-                <textarea
-                    id="capsule-message"
-                    class="form-control"
-                    rows="2"
-                    maxlength="300"
-                    placeholder="캡슐에 담을 메시지를 적어주세요"
-                    required
-                ></textarea>
-                <button type="submit" class="btn w-100 auth-submit-btn">캡슐에 담기</button>
-                <p id="capsule-form-message" class="mt-2"></p>
-            </form>
+            <div class="modal fade" id="capsule-write-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content capsule-modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">캡슐에 메시지 담기</h5>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="capsule-form" class="capsule-form">
+                                <textarea
+                                    id="capsule-message"
+                                    class="form-control"
+                                    rows="3"
+                                    maxlength="300"
+                                    placeholder="캡슐에 담을 메시지를 적어주세요"
+                                    required
+                                ></textarea>
+                                <button type="submit" class="btn w-100 auth-submit-btn">
+                                    캡슐에 담기
+                                </button>
+                                <p id="capsule-form-message" class="mt-2 mb-0"></p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
 
         <script src="/static/script.js"></script>
