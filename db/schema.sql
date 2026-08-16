@@ -26,3 +26,16 @@ CREATE TABLE users (
     created_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW()
 );
+
+-- ================================================================
+-- Capsules
+-- ================================================================
+CREATE TABLE capsules (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id         UUID NOT NULL REFERENCES users(id),
+    message         TEXT NOT NULL,
+    drawn_at        TIMESTAMPTZ,
+    created_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_capsules_undrawn ON capsules (drawn_at) WHERE drawn_at IS NULL;

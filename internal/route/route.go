@@ -10,10 +10,11 @@ import (
 )
 
 type Handlers struct {
-	Page   *handler.PageHandler
-	Auth   *handler.AuthHandler
-	Avatar *handler.AvatarHandler
-	User   *handler.UserHandler
+	Page    *handler.PageHandler
+	Auth    *handler.AuthHandler
+	Avatar  *handler.AvatarHandler
+	User    *handler.UserHandler
+	Capsule *handler.CapsuleHandler
 }
 
 func SetupRoutes(r *gin.Engine, h Handlers) {
@@ -35,6 +36,9 @@ func SetupRoutes(r *gin.Engine, h Handlers) {
 		v1.GET("/avatars/:avatarID", h.Avatar.GetAvatar)
 
 		v1.PUT("/users/avatar", middleware.AuthMiddleware(), h.User.UpdateUserAvatar)
+
+		v1.POST("/capsules", middleware.AuthMiddleware(), h.Capsule.CreateCapsule)
+		v1.POST("/capsules/draw", middleware.AuthMiddleware(), h.Capsule.DrawCapsule)
 	}
 
 }

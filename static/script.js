@@ -174,11 +174,119 @@ async function changeAvatar(id) {
     }
 }
 
+const CAPSULE_COLORS = ['gray', 'red', 'yellow', 'pink', 'blue', 'green', 'brown', 'purple'];
+let isPulling = false;
+
+function pullGacha() {
+    if (isPulling) return;
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('로그인이 필요합니다.');
+        window.location.href = '/login';
+        return;
+    }
+
+    isPulling = true;
+
+    const knobImg = document.getElementById('knob-img');
+    const capsule = document.getElementById('gacha-capsule');
+    const result = document.getElementById('capsule-result');
+
+    capsule.classList.remove('drop');
+    capsule.style.display = 'none';
+    result.classList.add('d-none');
+
+    let frame = 0;
+    const totalSpins = 8;
+    const spinInterval = setInterval(async () => {
+        const frameNumber = (frame % 4) + 1;
+        knobImg.src = `/static/images/objects/machine-labor_${frameNumber}.png`;
+        frame++;
+
+        if (frame >= totalSpins) {
+            clearInterval(spinInterval);
+            knobImg.src = '/static/images/objects/machine-labor_1.png';
+
+            try {
+                const res = await fetch('/api/v1/capsules/draw', {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || '캡슐을 뽑지 못했습니다.');
+                }
+
+                const color = CAPSULE_COLORS[Math.floor(Math.random() * CAPSULE_COLORS.length)];
+                capsule.src = `/static/images/objects/capsule_${color}.png`;
+                capsule.style.display = 'block';
+                requestAnimationFrame(() => capsule.classList.add('drop'));
+
+                document.getElementById('capsule-result-nickname').innerText = `${data.nickname}님의 메시지`;
+                document.getElementById('capsule-result-message').innerText = data.message;
+                result.classList.remove('d-none');
+            } catch (e) {
+                document.getElementById('capsule-result-nickname').innerText = '';
+                document.getElementById('capsule-result-message').innerText = e.message;
+                result.classList.remove('d-none');
+            } finally {
+                isPulling = false;
+            }
+        }
+    }, 120);
+}
+
+async function submitCapsule(e) {
+    e.preventDefault();
+
+    const messageEl = document.getElementById('capsule-form-message');
+    const token = localStorage.getItem('token');
+    if (!token) {
+        messageEl.innerText = '로그인이 필요합니다.';
+        messageEl.style.color = '#d33';
+        return;
+    }
+
+    const textarea = document.getElementById('capsule-message');
+    const message = textarea.value.trim();
+    if (!message) return;
+
+    try {
+        const res = await fetch('/api/v1/capsules', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ message }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.error || '캡슐 작성에 실패했습니다.');
+        }
+
+        textarea.value = '';
+        messageEl.innerText = '캡슐에 담았습니다!';
+        messageEl.style.color = 'green';
+    } catch (e) {
+        messageEl.innerText = e.message;
+        messageEl.style.color = '#d33';
+    }
+}
+
 const signupForm = document.getElementById('signup-form');
 if (signupForm) signupForm.addEventListener('submit', signup);
 
 const loginForm = document.getElementById('login-form');
 if (loginForm) loginForm.addEventListener('submit', login);
+
+const capsuleForm = document.getElementById('capsule-form');
+if (capsuleForm) capsuleForm.addEventListener('submit', submitCapsule);
 
 renderAvatarPicker();
 

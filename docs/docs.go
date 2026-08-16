@@ -85,6 +85,70 @@ const docTemplate = `{
                 }
             }
         },
+        "/capsules": {
+            "post": {
+                "description": "캡슐의 메시지를 작성합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "capsules"
+                ],
+                "summary": "캡슐 메시지 1개 작성",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CapsuleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/capsules/draw": {
+            "post": {
+                "description": "아직 뽑히지 않은 캡슐 중 하나를 랜덤으로 뽑아 메시지와 작성자 닉네임을 반환합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "capsules"
+                ],
+                "summary": "캡슐 1개 랜덤 뽑기",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CapsuleResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "이메일/비밀번호로 사용자를 인증하고 JWT를 발급합니다.",
@@ -196,6 +260,20 @@ const docTemplate = `{
                 },
                 "sort_order": {
                     "type": "integer"
+                }
+            }
+        },
+        "dto.CapsuleResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
                 }
             }
         },

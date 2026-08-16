@@ -15,6 +15,10 @@ func NewUserService(queries sqlc.Querier) *UserService {
 	return &UserService{queries: queries}
 }
 
+func (s *UserService) GetUserByUserID(ctx context.Context, userID pgtype.UUID) (sqlc.User, error) {
+	return s.queries.GetUserByUserID(ctx, userID)
+}
+
 func (s *UserService) UpdateUserAvatar(ctx context.Context, userID pgtype.UUID, avatarID pgtype.UUID) (sqlc.User, error) {
 	return s.queries.UpdateUserAvatar(ctx, sqlc.UpdateUserAvatarParams{
 		ID:       userID,

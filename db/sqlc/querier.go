@@ -11,9 +11,12 @@ import (
 )
 
 type Querier interface {
+	CreateCapsule(ctx context.Context, arg CreateCapsuleParams) (Capsule, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	DrawCapsule(ctx context.Context) (Capsule, error)
 	GetAvatarByID(ctx context.Context, id pgtype.UUID) (Avatar, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
+	GetUserByUserID(ctx context.Context, id pgtype.UUID) (User, error)
 	ListActiveAvatars(ctx context.Context) ([]Avatar, error)
 	UpdateUserAvatar(ctx context.Context, arg UpdateUserAvatarParams) (User, error)
 }

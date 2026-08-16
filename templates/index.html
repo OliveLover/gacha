@@ -62,6 +62,42 @@
             </div>
         </header>
 
+        <main class="gacha-section">
+            <div class="gacha-machine">
+                <img
+                    src="/static/images/objects/capsule-machin.png"
+                    class="machine-img"
+                    alt="가챠 머신"
+                />
+                <button class="machine-knob" id="gacha-knob" onclick="pullGacha()">
+                    <img
+                        id="knob-img"
+                        src="/static/images/objects/machine-labor_1.png"
+                        alt="손잡이"
+                    />
+                </button>
+                <img id="gacha-capsule" class="gacha-capsule" alt="캡슐" />
+            </div>
+
+            <div id="capsule-result" class="capsule-result d-none">
+                <p id="capsule-result-nickname" class="capsule-result-nickname"></p>
+                <p id="capsule-result-message" class="capsule-result-message"></p>
+            </div>
+
+            <form id="capsule-form" class="capsule-form">
+                <textarea
+                    id="capsule-message"
+                    class="form-control"
+                    rows="2"
+                    maxlength="300"
+                    placeholder="캡슐에 담을 메시지를 적어주세요"
+                    required
+                ></textarea>
+                <button type="submit" class="btn w-100 auth-submit-btn">캡슐에 담기</button>
+                <p id="capsule-form-message" class="mt-2"></p>
+            </form>
+        </main>
+
         <script src="/static/script.js"></script>
     </body>
 </html>

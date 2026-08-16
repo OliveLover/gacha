@@ -64,11 +64,31 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 	return i, err
 }
 
+const getUserByUserID = `-- name: GetUserByUserID :one
+SELECT id, email, nickname, password_hash, avatar_id, created_at, updated_at FROM users
+WHERE id = $1
+`
+
+func (q *Queries) GetUserByUserID(ctx context.Context, id pgtype.UUID) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByUserID, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Nickname,
+		&i.PasswordHash,
+		&i.AvatarID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const updateUserAvatar = `-- name: UpdateUserAvatar :one
 UPDATE users
-SET avatar_id   = $2,
-    updated_at  = NOW()
-WHERE id = $1
+   SET avatar_id   = $2,
+       updated_at  = NOW()
+ WHERE id = $1
 RETURNING id, email, nickname, password_hash, avatar_id, created_at, updated_at
 `
 
