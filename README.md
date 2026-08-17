@@ -1,4 +1,7 @@
 # Gacha
+![기간](https://img.shields.io/badge/개발기간-[Phase_1]_2026.08.07~2026.08.16(약10일)-blue)
+![인원](https://img.shields.io/badge/개발인원-1인-green)
+<img width="1800" height="1180" alt="gacha_readme_banner" src="https://github.com/user-attachments/assets/eb8812cf-307e-4c67-9b0d-29ac781d1e70" />
 
 메시지를 캡슐에 담아 뽑기 머신에 넣고, 다른 사람이 랜덤으로 뽑아 읽는 캡슐 토이(가챠) 웹 서비스.
 
